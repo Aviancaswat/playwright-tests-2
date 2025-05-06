@@ -178,19 +178,35 @@ test.describe('Comenzo prueba avianca', () => {
         //  await page.locator('.journey_fares').first().locator('.fare-flex').click();
         await takeScreenshot('09-seleccion-vuelo-ida');
         //@ts-ignore
-        
-        await page.waitForSelector("#journeysContainerId_1", {timeout: 15000});
+
+        await page.waitForTimeout(1500);
+        const isVisibleModal = await page.locator("#FB310").first().isVisible();
+
+        if (isVisibleModal) {
+            await expect(page.locator(".cro-button.cro-no-accept-upsell-button")).toBeVisible();
+            await page.locator(".cro-button.cro-no-accept-upsell-button").first().click();
+        }
+
+        await page.waitForSelector("#journeysContainerId_1", { timeout: 15000 });
         const containerVuelta = page.locator("#journeysContainerId_1");
         await expect(containerVuelta).toBeVisible();
         // await expect(page.locator('.journey_price_fare-select_label-text').nth(22)).toBeVisible();
         await containerVuelta.locator(".journey_price_fare-select_label-text").first().click();
         await takeScreenshot('13-seleccion-vuelo-regreso');
         await containerVuelta.locator('.journey_fares').first().locator('.light-basic.cro-new-basic-button').click();
-        await page.waitForTimeout(3000);
+        await page.waitForTimeout(1500);
+
+        const isVisibleModal2 = await page.locator("#FB310").first().isVisible();
+
+        if (isVisibleModal2) {
+            await expect(page.locator(".cro-button.cro-no-accept-upsell-button")).toBeVisible();
+            await page.locator(".cro-button.cro-no-accept-upsell-button").first().click();
+        }
+
         await takeScreenshot('13-resumen-de-vuelos-seleccionados');
 
         // await page.locator(".button.page_button.btn-action").click();
-        expect(page.locator(".button.page_button.btn-action")).toBeVisible();
+        await expect(page.locator(".button.page_button.btn-action")).toBeVisible();
         await page.locator('.button.page_button.btn-action').click();
 
         await page.waitForSelector(".passenger_data");
