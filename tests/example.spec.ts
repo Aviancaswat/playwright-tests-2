@@ -1,7 +1,9 @@
 import { test, expect, webkit, chromium } from '@playwright/test';
 
+type Lang = 'es' | 'en' | 'pt' | 'fr';
+
 type copysType = {
-    idioma: string,
+    idioma: Lang,
     pais: string,
     fecha_salida: string,
     fecha_llegada: string,
@@ -31,11 +33,11 @@ type copysType = {
         buscar: string,
         vuelta: string,
     },
-    getLang: () => string
+    getLang: () => Lang
 }
 
 const copys: copysType = {
-    idioma: 'es',
+    idioma: 'es' as Lang,
     pais: 'CO',
     fecha_salida: 'may 14',
     fecha_llegada: 'may 20',
@@ -72,18 +74,7 @@ test.describe('Comenzo prueba avianca', () => {
 
     test('prueba home avianca', async ({ page }, testInfo) => {
         test.setTimeout(100_000);
-        // const browser = await chromium.launch({ headless: true })
-        // const context = await browser.newContext({
-        //     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-        //     viewport: { width: 1280, height: 800 },
-        //     locale: 'es-ES',
-        //     extraHTTPHeaders: {
-        //         'accept-language': 'es-ES,es;q=0.9',
-        //     },
-        // });
-        // const page = await context.newPage();
         let step = 0;
-
         const getTimestamp = () => {
             const now = new Date();
             const pad = (n: number) => n.toString().padStart(2, '0');
@@ -135,22 +126,21 @@ test.describe('Comenzo prueba avianca', () => {
 
         await expect(page.locator('.content-wrap')).toBeVisible();
         await expect(page.locator('#originBtn')).toBeVisible();
-        //@ts-ignore
         const origen = page.getByPlaceholder((copys[idioma]).origen);
         await page.locator('button#originBtn').click();
         await origen.fill(copys['ciudad_origen']);
         await origen.press('Enter');
         await (page.locator('id=' + copys['ciudad_origen'])).click()
         await takeScreenshot('03-ciudad-origen');
-        //@ts-ignore
+
         const destino = page.getByPlaceholder(copys[idioma].destino);
         await destino.click();
         await destino.fill(copys['ciudad_destino']);
         await destino.press('Enter');
-        await (page.locator('id=' + copys['ciudad_destino'])).click()
+        await (page.locator('id=' + copys['ciudad_destino'])).click();
         await takeScreenshot('04-ciudad-destino');
 
-        const fechaIda = page.locator('id=departureInputDatePickerId')
+        const fechaIda = await page.locator('id=departureInputDatePickerId')
         fechaIda.click();
         await page.locator('span').filter({ hasText: copys['fecha_salida'] }).click();
         await takeScreenshot('05-fecha-ida');
@@ -158,15 +148,14 @@ test.describe('Comenzo prueba avianca', () => {
         await page.locator('span').filter({ hasText: copys['fecha_llegada'] }).click();
         await takeScreenshot('06-fecha-vuelta');
 
-        // await page.getByRole('button', { name: '' }).nth(1).click();
-        // await page.getByRole('button', { name: '' }).nth(2).click();
-        // await page.getByRole('button', { name: '' }).nth(3).click();
-        // const confirmar = page.locator('div#paxControlSearchId > div > div:nth-of-type(2) > div > div > button')
-        // confirmar.click()
+        await page.getByRole('button', { name: '' }).nth(1).click();
+        await page.getByRole('button', { name: '' }).nth(2).click();
+        await page.getByRole('button', { name: '' }).nth(3).click();
+        const confirmar = await page.locator('div#paxControlSearchId > div > div:nth-of-type(2) > div > div > button')
+        confirmar.click();
+
         await takeScreenshot('07-seleccion-pasajeros');
-        //@ts-ignore
         await expect(page.getByRole('button', { name: copys[idioma].buscar, exact: true })).toBeVisible()
-        //@ts-ignore
         await page.getByRole('button', { name: copys[idioma].buscar, exact: true }).click();
         await takeScreenshot('08-buscar');
 
@@ -177,7 +166,6 @@ test.describe('Comenzo prueba avianca', () => {
         await page.locator('.journey_fares').first().locator('.light-basic.cro-new-basic-button').click();
         //  await page.locator('.journey_fares').first().locator('.fare-flex').click();
         await takeScreenshot('09-seleccion-vuelo-ida');
-        //@ts-ignore
 
         await page.waitForTimeout(1500);
         const isVisibleModal = await page.locator("#FB310").first().isVisible();
@@ -209,8 +197,117 @@ test.describe('Comenzo prueba avianca', () => {
         await expect(page.locator(".button.page_button.btn-action")).toBeVisible();
         await page.locator('.button.page_button.btn-action').click();
 
-        await page.waitForSelector(".passenger_data");
+        //página de pasajeros
+        await takeScreenshot("inicio-de-llenado-pagina-de-pasajeros");
+        await page.waitForSelector(".passenger_data_group");
+
+        //seteando los valores
+        await page.evaluate(() => {
+            const userNamesData: Array<string> = [
+                "john doe",
+                "jane smith",
+                "alexander wilson",
+                "maria gomez",
+                "roberto perez",
+                "lucia martinez",
+                "david hernandez",
+                "carla jones",
+                "luis vega",
+                "susan brown"
+            ];
+
+            const lastNamesData: Array<string> = [
+                "Doe",
+                "Smith",
+                "Wilson",
+                "Gomez",
+                "Perez",
+                "Martinez",
+                "Hernandez",
+                "Jones",
+                "Vega",
+                "Brown"
+            ];
+
+            const emailsData: Array<string> = [
+                "monitoreo.digital@avianca.com"
+            ];
+
+            const phoneNumbersData: Array<string> = [
+                "123456",
+                "987654",
+                "654321",
+                "321654",
+                "987123",
+                "456789",
+                "102938",
+                "112233",
+                "778899",
+                "334455"
+            ];
+
+            const getDataRandom = (data: Array<string> = []) => {
+                return data[Math.floor(Math.random() * data.length)];
+            }
+
+            const getValueElement = (element: HTMLInputElement) => {
+                let value = null;
+                if (element.name === "email") {
+                    value = getDataRandom(emailsData);
+                }
+                else if (element.name === "phone_phoneNumberId") {
+                    value = getDataRandom(phoneNumbersData);
+                }
+                else if (element.id.includes("IdFirstName")) {
+                    value = getDataRandom(userNamesData);
+                }
+                else {
+                    value = getDataRandom(lastNamesData);
+                }
+                return value;
+            }
+
+            const setValuesDefaultAutoForm = () => {
+                const elements = document.querySelectorAll('.ui-input');
+                console.log("elements: ", elements);
+                Array.from(elements).forEach((element, index) => {
+                    if (element.tagName === "BUTTON") {
+                        (element as HTMLButtonElement).click();
+                        const listOptions = document.querySelector(".ui-dropdown_list");
+                        (listOptions?.querySelector(".ui-dropdown_item>button") as HTMLButtonElement).click();
+                    }
+                    else if (element.tagName === "INPUT") {
+                        const containers = document.querySelectorAll(".ui-input-container");
+                        Array.from(containers).forEach(e => { e.classList.add("is-focused") });
+                        let eventBlur = new Event("blur");
+                        let eventFocus = new Event("focus");
+                        (element as HTMLInputElement).value = getValueElement(element as HTMLInputElement);
+                        ['change', 'input'].forEach(event => {
+                            let handleEvent = new Event(event, { bubbles: true, cancelable: false });
+                            element.dispatchEvent(handleEvent);
+                        });
+                        element.dispatchEvent(eventFocus);
+                        setTimeout(() => {
+                            element.dispatchEvent(eventBlur);
+                            Array.from(containers).forEach(e => { e.classList.remove("is-focused") });
+                        }, 100);
+                    }
+                });
+
+                const fieldAuthoritation = document.querySelector("#acceptNewCheckbox") as HTMLInputElement;
+                if (fieldAuthoritation) fieldAuthoritation.checked = true;
+            }
+
+            setValuesDefaultAutoForm();
+        });
+
+        await takeScreenshot("llenado-de-pasajeros-ok");
+        await page.waitForTimeout(2000);
+        //boton de continuar para los servicios
+        await expect(page.locator(".button.page_button.btn-action").last()).toBeVisible();
+        await page.locator(".button.page_button.btn-action").last().click();
         await page.waitForTimeout(5000);
-        await takeScreenshot("fill-passenger");
+
+        await takeScreenshot("Pagina-de-servicios");
     });
 });

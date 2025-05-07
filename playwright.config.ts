@@ -43,6 +43,9 @@ export default defineConfig({
     screenshot: 'on',
     video: 'on',
     ignoreHTTPSErrors: true,
+    launchOptions: {
+        args: ['--disable-http2']
+    }
   },
   projects: [
     {
