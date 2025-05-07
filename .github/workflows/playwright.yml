@@ -60,9 +60,9 @@ jobs:
     needs: test
     if: failure()
     runs-on: ubuntu-latest
-    steps:
-      - name: Send Teams notification
-        run: |
-          curl -H 'Content-Type: application/json' \
-          -d "{\"text\": \"❌ Las pruebas de Playwright fallaron en el repositorio ${{ github.repository }} en el flujo de trabajo '${{ github.workflow }}'. 👉 [Ver ejecución](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\"}" \
-          https://aegisdentsunetwork.webhook.office.com/webhookb2/2477d4f6-71b7-4645-b106-c33045648dfa@6e8992ec-76d5-4ea5-8eae-b0c5e558749a/IncomingWebhook/6adc299e22d84c0b920a7eb449c2aeec/db30e4aa-7066-443e-a6b0-2de12639312e/V2vkyHROiR8t1t2q3xX1w2yJc0NBy5sPAGYyGmEzwuyss1
+    # steps:
+    #   - name: Send Teams notification
+    #     run: |
+    #       curl -H 'Content-Type: application/json' \
+    #       -d "{\"text\": \"❌ Las pruebas de Playwright fallaron en el repositorio ${{ github.repository }} en el flujo de trabajo '${{ github.workflow }}'. 👉 [Ver ejecución](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\"}" \
+    #       https://aegisdentsunetwork.webhook.office.com/webhookb2/2477d4f6-71b7-4645-b106-c33045648dfa@6e8992ec-76d5-4ea5-8eae-b0c5e558749a/IncomingWebhook/6adc299e22d84c0b920a7eb449c2aeec/db30e4aa-7066-443e-a6b0-2de12639312e/V2vkyHROiR8t1t2q3xX1w2yJc0NBy5sPAGYyGmEzwuyss1
