@@ -306,7 +306,7 @@ test.describe('Comenzo prueba avianca', () => {
         //boton de continuar para los servicios
         await expect(page.locator(".button.page_button.btn-action").last()).toBeVisible();
         await page.locator(".button.page_button.btn-action").last().click();
-        await page.waitForTimeout(5000);
+        await page.waitForTimeout(10000);
 
         await takeScreenshot("Pagina-de-servicios");
     });
