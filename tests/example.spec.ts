@@ -306,8 +306,8 @@ test.describe('Comenzo prueba avianca', () => {
         //boton de continuar para los servicios
         await expect(page.locator(".button.page_button.btn-action").last()).toBeVisible();
         await page.locator(".button.page_button.btn-action").last().click();
-        await page.waitForTimeout(10000);
 
+        await page.waitForSelector(".main-banner--section-offer");
         await takeScreenshot("Pagina-de-servicios");
     });
 });
