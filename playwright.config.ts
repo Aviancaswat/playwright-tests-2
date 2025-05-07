@@ -54,7 +54,7 @@ export default defineConfig({
         browserName: 'chromium',
         channel: 'chrome',
         userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-        viewport: { width: 1600, height: 1200 },
+        viewport: { width: 1700, height: 1400 },
         locale: 'es-ES',
         extraHTTPHeaders: {
           'accept-language': 'es-ES,es;q=0.9',

@@ -193,9 +193,8 @@ test.describe('Comenzo prueba avianca', () => {
 
         await takeScreenshot('13-resumen-de-vuelos-seleccionados');
 
-        // await page.locator(".button.page_button.btn-action").click();
-        await expect(page.locator(".button.page_button.btn-action")).toBeVisible();
-        await page.locator('.button.page_button.btn-action').click();
+        await expect(page.locator(".button.page_button.btn-action").first()).toBeVisible();
+        await page.locator('.button.page_button.btn-action').first().click();
 
         //página de pasajeros
         await takeScreenshot("inicio-de-llenado-pagina-de-pasajeros");
