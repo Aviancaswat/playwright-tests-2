@@ -196,7 +196,7 @@ test.describe('Comenzo prueba avianca', () => {
         const buttonConfirmResumen = page.locator(".button.page_button.btn-action");
         await expect(buttonConfirmResumen).toBeVisible();
         buttonConfirmResumen.scrollIntoViewIfNeeded();
-        await page.locator('.button.page_button.btn-action').click();
+        await buttonConfirmResumen.click();
 
         //página de pasajeros
         await page.waitForSelector(".passenger_data_group");
