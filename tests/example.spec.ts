@@ -81,7 +81,7 @@ const copys: copysType = {
 test.describe('Comenzo prueba avianca', () => {
 
     test('prueba home avianca', async ({ page }, testInfo) => {
-        test.setTimeout(300_000);
+        test.setTimeout(100_000);
         let step = 0;
         const getTimestamp = () => {
             const now = new Date();
@@ -313,6 +313,7 @@ test.describe('Comenzo prueba avianca', () => {
 
         const upsellService = await page.locator('.terciary-button').last().isVisible();
         if (upsellService) {
+            await expect(page.locator('.terciary-button').last()).toBeVisible();
             await page.locator('.terciary-button').last().click()
         }
         await page.waitForTimeout(12000);
