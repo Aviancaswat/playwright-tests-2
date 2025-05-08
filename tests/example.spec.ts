@@ -193,6 +193,7 @@ test.describe('Comenzo prueba avianca', () => {
 
         await takeScreenshot('13-resumen-de-vuelos-seleccionados');
 
+        await page.waitForSelector(".trip-summary");
         const buttonConfirmResumen = page.locator(".button.page_button.btn-action");
         await expect(buttonConfirmResumen).toBeVisible();
         buttonConfirmResumen.scrollIntoViewIfNeeded();
@@ -318,8 +319,10 @@ test.describe('Comenzo prueba avianca', () => {
             await expect(page.locator('.terciary-button').last()).toBeVisible();
             await page.locator('.terciary-button').last().click()
         }
+        
         await page.waitForTimeout(12000);
         await takeScreenshot("Pagina-de-seleccion-asientos");
+        
         //seleccion de asientos
         const pasajeros = page.locator(".pax-selector_pax-avatar")
 
@@ -334,7 +337,7 @@ test.describe('Comenzo prueba avianca', () => {
         await takeScreenshot("seleccion-asiento-vuelta");
         await page.locator('.next-flight-code').click();
 
-        const pasajerosVuelta = page.locator(".pax-selector_pax-avatar")
+        const pasajerosVuelta = page.locator(".pax-selector_pax-avatar");
 
         for (const j of await pasajerosVuelta.all()) {
             await takeScreenshot("seleccion-asiento");
