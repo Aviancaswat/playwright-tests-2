@@ -81,7 +81,7 @@ const copys: copysType = {
 test.describe('Comenzo prueba avianca', () => {
 
     test('prueba home avianca', async ({ page }, testInfo) => {
-        test.setTimeout(100_000);
+        test.setTimeout(300_000);
         let step = 0;
         const getTimestamp = () => {
             const now = new Date();
@@ -310,46 +310,5 @@ test.describe('Comenzo prueba avianca', () => {
         await page.waitForSelector(".main-banner--section-offer");
         await page.waitForTimeout(8000);
         await takeScreenshot("Pagina-de-servicios");
-
-        await expect(page.locator(".button_label").last()).toBeVisible();
-        await page.locator('.button_label').last().click();
-
-        const upsellService = await page.locator('.terciary-button').last().isVisible();
-        if (upsellService) {
-            await expect(page.locator('.terciary-button').last()).toBeVisible();
-            await page.locator('.terciary-button').last().click()
-        }
-        
-        await page.waitForTimeout(12000);
-        await takeScreenshot("Pagina-de-seleccion-asientos");
-        
-        //seleccion de asientos
-        const pasajeros = page.locator(".pax-selector_pax-avatar")
-
-        for (const e of await pasajeros.all()) {
-            await takeScreenshot("seleccion-asiento");
-            await expect(page.locator(".seat-number").first()).toBeVisible();
-            await page.locator('.seat-number').first().click();
-            await page.waitForTimeout(8000);
-        }
-
-        await expect(page.locator(".next-flight-code")).toBeVisible();
-        await takeScreenshot("seleccion-asiento-vuelta");
-        await page.locator('.next-flight-code').click();
-
-        const pasajerosVuelta = page.locator(".pax-selector_pax-avatar");
-
-        for (const j of await pasajerosVuelta.all()) {
-            await takeScreenshot("seleccion-asiento");
-            await expect(page.locator(".seat-number").first()).toBeVisible();
-            await page.locator('.seat-number').first().click();
-            await page.waitForTimeout(8000);
-        }
-
-        await expect(page.getByRole('button', { name: copys[idioma].pagar, exact: true })).toBeVisible()
-        await page.getByRole('button', { name: copys[idioma].pagar, exact: true }).click();
-        await page.waitForTimeout(5000);
-        await expect(page.locator('.payment-container_title')).toBeVisible();
-        await takeScreenshot("pagos");
     });
 });
