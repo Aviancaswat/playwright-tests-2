@@ -365,7 +365,11 @@ test.describe('Comenzo prueba avianca', () => {
         // await expect(page.locator('.payment-container_title')).toBeVisible();
         // await takeScreenshot("pagos");
 
-        
+        const noOtraTarjeta = page.locator('.fb-left-container');
+        await expect(noOtraTarjeta).toBeVisible();
+        await noOtraTarjeta.click();
+        await page.waitForTimeout(1000);
+
         // 16 – Llenar datos de la tarjeta (iframe)
         await page.waitForSelector('iframe.payment-forms-layout_iframe', { timeout: 15_000 });
         const cardFrame = page.frameLocator('iframe.payment-forms-layout_iframe');
