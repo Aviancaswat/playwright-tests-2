@@ -327,5 +327,6 @@ test.describe('Comenzo prueba avianca', () => {
         // await expect(page.locator('.button.page_button.btn-action.page_button-primary-flow.ng-star-inserted.FB843')).toBeVisible();
         // await page.locator('.button.page_button.btn-action.page_button-primary-flow.ng-star-inserte.FB843').click();
 
+        
     });
 });
