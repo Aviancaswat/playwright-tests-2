@@ -365,5 +365,96 @@ test.describe('Comenzo prueba avianca', () => {
         await expect(page.locator('.payment-container_title')).toBeVisible();
         await takeScreenshot("pagos");
 
+        
+        // 16 – Llenar datos de la tarjeta (iframe)
+        await page.waitForSelector('iframe.payment-forms-layout_iframe', { timeout: 15_000 });
+        const cardFrame = page.frameLocator('iframe.payment-forms-layout_iframe');
+
+        // Titular de la tarjeta (input#Holder)
+        const holderInput = cardFrame.locator('input#Holder');
+        await expect(holderInput).toBeVisible();
+        await holderInput.fill('John Doe');
+
+        // Número de tarjeta (input#Data)
+        const dataInput = cardFrame.locator('input#Data');
+        await expect(dataInput).toBeVisible();
+        await dataInput.fill('4111111111111111');
+
+        await takeScreenshot('16-tarjeta-Holder-Data');
+
+
+        await takeScreenshot('17-datos-facturacion');
+        await takeScreenshot("pagos");
+
+        // Fecha de expiración: Mes
+        const monthBtn = cardFrame.locator('button#expirationMonth_ExpirationDate');
+        await expect(monthBtn).toBeVisible();
+        await monthBtn.click();
+        await cardFrame
+            .locator('ul#listId_expirationMonth_ExpirationDate li button')
+            .filter({ hasText: '12' })    // el mes que necesites
+            .click();
+
+        // Fecha de expiración: Año
+        const yearBtn = cardFrame.locator('button#expirationYear_ExpirationDate');
+        await expect(yearBtn).toBeVisible();
+        await yearBtn.click();
+        await cardFrame
+            .locator('ul#listId_expirationYear_ExpirationDate li button')
+            .filter({ hasText: '25' })    // el año que necesites (por ejemplo “25” para 2025)
+            .click();
+
+        // CVV
+        const cvvInput = cardFrame.locator('input#Cvv');
+        await expect(cvvInput).toBeVisible();
+        await cvvInput.fill('123');
+
+        //screenshot tras expiración y CVV
+        await takeScreenshot('18-tarjeta-expiracion-cvv');
+
+        // Llenar datos de facturación
+        await page.waitForSelector('input#email', { timeout: 15_000 });
+
+        // Correo electrónico
+        const emailInput = page.locator('input#email');
+        await expect(emailInput).toBeVisible();
+        await emailInput.fill('monitoreo.digital@avianca.com');
+
+        // Dirección de residencia
+        const addressInput = page.locator('input#address');
+        await expect(addressInput).toBeVisible();
+        await addressInput.fill('Calle 123 #45-67');
+
+        // Ciudad
+        const cityInput = page.locator('input#city');
+        await expect(cityInput).toBeVisible();
+        await cityInput.fill('Bogotá');
+
+        // País
+        const countryBtn = page.locator('button#country');
+        await expect(countryBtn).toBeVisible();
+        await countryBtn.click();
+
+        // Esperar a que aparezcan las opciones
+        await page.waitForSelector('div.ds-select-dropdown li button', { timeout: 5_000 });
+
+        // Seleccionar “Colombia”
+        const countryOption = page
+            .locator('div.ds-select-dropdown li button')
+            .filter({ hasText: 'Colombia' });
+        await expect(countryOption).toBeVisible();
+        await countryOption.click();
+
+        await takeScreenshot('19-country-seleccionado');
+
+        // Aceptar Términos
+        const termsCheckbox = page.locator('input#terms');
+        await expect(termsCheckbox).toBeVisible();
+        await termsCheckbox.check();
+        await takeScreenshot('20-aceptar-terminos');
+
+        // Captura final de facturación
+        await takeScreenshot('21-datos-facturacion');
+
     });
 });
