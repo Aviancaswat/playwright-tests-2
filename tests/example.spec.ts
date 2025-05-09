@@ -310,5 +310,22 @@ test.describe('Comenzo prueba avianca', () => {
         await page.waitForSelector(".main-banner--section-offer");
         await page.waitForTimeout(8000);
         await takeScreenshot("Pagina-de-servicios");
+        await expect(page.locator("#serviceButtonTypeBusinessLounge")).toBeVisible();
+        await page.locator('#serviceButtonTypeBusinessLounge').click();
+        await page.locator('.service_item_button.button').first().click();
+        await page.locator('.button.amount-summary_button.amount-summary_button-action.is-action.ng-star-inserted').last().click();
+
+        await expect(page.locator('#serviceButtonTypeSpecialAssistance')).toBeVisible();
+        await page.locator('#serviceButtonTypeSpecialAssistance').click();
+        await page.locator('.service_item_button.button').first().click();
+        await page.locator('.button.amount-summary_button.amount-summary_button-action.is-action.ng-star-inserted').last().click();
+
+        // await expect(page.locator('.services-card_action_button.button')).toBeVisible();
+        // await page.locator('.services-card_action_button.button').last().click();
+        // await page.locator('.button.amount-summary_button.amount-summary_button-action.is-action.ng-star-inserted.FB-newConfirmButton').click();
+
+        // await expect(page.locator('.button.page_button.btn-action.page_button-primary-flow.ng-star-inserted.FB843')).toBeVisible();
+        // await page.locator('.button.page_button.btn-action.page_button-primary-flow.ng-star-inserte.FB843').click();
+
     });
 });
