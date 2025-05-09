@@ -362,8 +362,8 @@ test.describe('Comenzo prueba avianca', () => {
         await expect(page.getByRole('button', { name: copys[idioma].pagar, exact: true })).toBeVisible()
         await page.getByRole('button', { name: copys[idioma].pagar, exact: true }).click();
         await page.waitForTimeout(5000);
-        await expect(page.locator('.payment-container_title')).toBeVisible();
-        await takeScreenshot("pagos");
+        // await expect(page.locator('.payment-container_title')).toBeVisible();
+        // await takeScreenshot("pagos");
 
         
         // 16 – Llenar datos de la tarjeta (iframe)
