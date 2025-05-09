@@ -313,20 +313,57 @@ test.describe('Comenzo prueba avianca', () => {
         await expect(page.locator("#serviceButtonTypeBusinessLounge")).toBeVisible();
         await page.locator('#serviceButtonTypeBusinessLounge').click();
         await page.locator('.service_item_button.button').first().click();
+        await takeScreenshot("Servicio avianca-lounges");
         await page.locator('.button.amount-summary_button.amount-summary_button-action.is-action.ng-star-inserted').last().click();
 
         await expect(page.locator('#serviceButtonTypeSpecialAssistance')).toBeVisible();
         await page.locator('#serviceButtonTypeSpecialAssistance').click();
+        await takeScreenshot("Servicio asistencia especial");
         await page.locator('.service_item_button.button').first().click();
         await page.locator('.button.amount-summary_button.amount-summary_button-action.is-action.ng-star-inserted').last().click();
 
-        // await expect(page.locator('.services-card_action_button.button')).toBeVisible();
-        // await page.locator('.services-card_action_button.button').last().click();
-        // await page.locator('.button.amount-summary_button.amount-summary_button-action.is-action.ng-star-inserted.FB-newConfirmButton').click();
+        await expect(page.locator('.services-card_action_button.button').last()).toBeVisible();
+        await takeScreenshot("Asistencia en viaje");
+        await page.locator('.services-card_action_button.button').last().click();
+        await page.locator('.button.amount-summary_button.amount-summary_button-action.is-action.ng-star-inserted.FB-newConfirmButton').click();
+        await takeScreenshot("Servicios añadidos");
+        await expect(page.locator(".button_label").last()).toBeVisible();
+        await page.locator('.button_label').last().click();
 
-        // await expect(page.locator('.button.page_button.btn-action.page_button-primary-flow.ng-star-inserted.FB843')).toBeVisible();
-        // await page.locator('.button.page_button.btn-action.page_button-primary-flow.ng-star-inserte.FB843').click();
+        const upsellService = await page.locator('.terciary-button').last().isVisible()
+        if (upsellService) {
+            await page.locator('.terciary-button').last().click()
+        }
+        await page.waitForTimeout(12000);
+        await takeScreenshot("Pagina-de-seleccion-asientos");
+        //seleccion de asientos
+        const pasajeros = page.locator(".pax-selector_pax-avatar")
 
-        
+        for (const e of await pasajeros.all()) {
+            await takeScreenshot("seleccion-asiento");
+            await expect(page.locator(".seat-number").first()).toBeVisible();
+            await page.locator('.seat-number').first().click();
+            await page.waitForTimeout(8000);
+        }
+
+        await expect(page.locator(".next-flight-code")).toBeVisible();
+        await takeScreenshot("seleccion-asiento-vuelta");
+        await page.locator('.next-flight-code').click();
+
+        const pasajerosVuelta = page.locator(".pax-selector_pax-avatar")
+
+        for (const j of await pasajerosVuelta.all()) {
+            await takeScreenshot("seleccion-asiento");
+            await expect(page.locator(".seat-number").first()).toBeVisible();
+            await page.locator('.seat-number').first().click();
+            await page.waitForTimeout(8000);
+        }
+
+        await expect(page.getByRole('button', { name: copys[idioma].pagar, exact: true })).toBeVisible()
+        await page.getByRole('button', { name: copys[idioma].pagar, exact: true }).click();
+        await page.waitForTimeout(5000);
+        await expect(page.locator('.payment-container_title')).toBeVisible();
+        await takeScreenshot("pagos");
+
     });
 });
