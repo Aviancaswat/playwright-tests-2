@@ -28,9 +28,16 @@
 
 name: Playwright Tests
 on:
-  push:      # cualquier rama
+  push:
+    branches:
+      - main
+      - master
+      - alf1-1573
   pull_request:
-  workflow_dispatch:
+    branches:
+      - main
+      - master
+      - alf1-1573
   # schedule:
   #   - cron: '*/10 * * * *'
   workflow_dispatch:
