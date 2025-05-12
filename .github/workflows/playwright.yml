@@ -27,6 +27,7 @@
 #         retention-days: 30
 
 name: Playwright Tests
+
 on:
   push:
     branches:
@@ -38,30 +39,54 @@ on:
       - main
       - master
       - alf1-1573
-  # schedule:
-  #   - cron: '*/10 * * * *'
-  workflow_dispatch:
+  workflow_dispatch: {}
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # necesario para comparar contra el commit anterior
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Get changed test files
+        id: changed
+        run: |
+          FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+            | grep -E '^tests/.*\.(spec|test)\.(js|ts)$' || true)
+          echo "changed_files<<EOF" >> $GITHUB_OUTPUT
+          echo "$FILES"             >> $GITHUB_OUTPUT
+          echo "EOF"                >> $GITHUB_OUTPUT
+
+      - name: Run only changed tests
+        if: steps.changed.outputs.changed_files != ''
+        run: npx playwright test ${{ steps.changed.outputs.changed_files }}
+
+      - name: No tests changed, skip Playwright
+        if: steps.changed.outputs.changed_files == ''
+        run: echo "No test files changed. Skipping Playwright run."
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
   # notify:
   #   needs: test
   #   if: failure()
@@ -72,3 +97,6 @@ jobs:
   #   #       curl -H 'Content-Type: application/json' \
   #   #       -d "{\"text\": \"❌ Las pruebas de Playwright fallaron en el repositorio ${{ github.repository }} en el flujo de trabajo '${{ github.workflow }}'. 👉 [Ver ejecución](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\"}" \
   #   #       https://aegisdentsunetwork.webhook.office.com/webhookb2/2477d4f6-71b7-4645-b106-c33045648dfa@6e8992ec-76d5-4ea5-8eae-b0c5e558749a/IncomingWebhook/6adc299e22d84c0b920a7eb449c2aeec/db30e4aa-7066-443e-a6b0-2de12639312e/V2vkyHROiR8t1t2q3xX1w2yJc0NBy5sPAGYyGmEzwuyss1
+
+
+  
