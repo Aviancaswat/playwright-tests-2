@@ -160,7 +160,7 @@ test.describe('Comenzo prueba avianca', () => {
         await takeScreenshot('08-buscar');
 
         // 09 – Selección de vuelo de ida con espera extendida
-        await page.waitForSelector('#pageWrap', { timeout: 15_000 });
+        await page.waitForSelector('#pageWrap', { timeout: 50_000 });
 
         const firstFareLabel = page
             .locator('.journey_price_fare-select_label-text')
