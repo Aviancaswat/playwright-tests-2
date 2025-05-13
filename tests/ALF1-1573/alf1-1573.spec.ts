@@ -159,21 +159,12 @@ test.describe('Comenzo prueba avianca', () => {
         await page.getByRole('button', { name: copys[idioma].buscar, exact: true }).click();
         await takeScreenshot('08-buscar');
 
-        // 09 – Selección de vuelo de ida con espera extendida
-        await page.waitForSelector('#pageWrap', { timeout: 50_000 });
-
-        const firstFareLabel = page
-            .locator('.journey_price_fare-select_label-text')
-            .first();
-        await firstFareLabel.waitFor({ state: 'visible', timeout: 15_000 });
-        await firstFareLabel.click();
-        await page.waitForSelector('.journey_fares', { timeout: 15_000 });
-        await page
-            .locator('.journey_fares')
-            .first()
-            .locator('.light-basic.cro-new-basic-button')
-            .click();
-
+        await page.waitForSelector('#pageWrap');
+        await expect(page.locator(".journey_price_fare-select_label-text").first()).toBeVisible();
+        await page.locator('.journey_price_fare-select_label-text').first().click();
+        await page.waitForSelector(".journey_fares");
+        await page.locator('.journey_fares').first().locator('.light-basic.cro-new-basic-button').click();
+        //  await page.locator('.journey_fares').first().locator('.fare-flex').click();
         await takeScreenshot('09-seleccion-vuelo-ida');
     });
 });
