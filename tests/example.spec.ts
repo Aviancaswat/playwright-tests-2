@@ -459,6 +459,5 @@ test.describe('Comenzo prueba avianca', () => {
 
         // Captura final de facturación
         await takeScreenshot('21-datos-facturacion');
-
     });
 });
