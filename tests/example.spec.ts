@@ -159,7 +159,7 @@ test.describe('Comenzo prueba avianca', () => {
         await page.getByRole('button', { name: copys[idioma].buscar, exact: true }).click();
         await takeScreenshot('08-buscar');
 
-        await page.waitForTimeout(12000);
+        await page.waitForTimeout(50000);
         await page.waitForSelector('#pageWrap');
         await expect(page.locator(".journey_price_fare-select_label-text").first()).toBeVisible();
         await page.locator('.journey_price_fare-select_label-text').first().click();
