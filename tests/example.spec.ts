@@ -160,8 +160,10 @@ test.describe('Comenzo prueba avianca', () => {
         await takeScreenshot('08-buscar');
 
         await page.waitForTimeout(80000);
-        await page.waitForSelector('#pageWrap');
-        await expect(page.locator(".journey_price_fare-select_label-text").first()).toBeVisible();
+        await page.waitForSelector('#pageWrap', { timeout: 60_000 });
+        await expect(
+            page.locator('.journey_price_fare-select_label-text').first()
+        ).toBeVisible({ timeout: 60_000 });
         await page.locator('.journey_price_fare-select_label-text').first().click();
         await page.waitForSelector(".journey_fares");
         await page.locator('.journey_fares').first().locator('.light-basic.cro-new-basic-button').click();
