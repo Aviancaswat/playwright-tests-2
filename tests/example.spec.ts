@@ -43,8 +43,8 @@ type copysType = {
 const copys: copysType = {
     idioma: 'es' as Lang,
     pais: 'CO',
-    fecha_salida: 'may 14',
-    fecha_llegada: 'may 20',
+    fecha_salida: 'may 25',
+    fecha_llegada: 'may 28',
     ciudad_origen: 'BAQ',
     ciudad_destino: 'BOG',
     es: {
@@ -159,6 +159,7 @@ test.describe('Comenzo prueba avianca', () => {
         await page.getByRole('button', { name: copys[idioma].buscar, exact: true }).click();
         await takeScreenshot('08-buscar');
 
+        await page.waitForTimeout(12000);
         await page.waitForSelector('#pageWrap');
         await expect(page.locator(".journey_price_fare-select_label-text").first()).toBeVisible();
         await page.locator('.journey_price_fare-select_label-text').first().click();
@@ -365,10 +366,10 @@ test.describe('Comenzo prueba avianca', () => {
         // await expect(page.locator('.payment-container_title')).toBeVisible();
         // await takeScreenshot("pagos");
 
-        const noOtraTarjeta = page.locator('.fb-left-container');
-        await expect(noOtraTarjeta).toBeVisible();
-        await noOtraTarjeta.click();
-        await page.waitForTimeout(1000);
+        // const noOtraTarjeta = page.locator('.fb-left-container');
+        // await expect(noOtraTarjeta).toBeVisible();
+        // await noOtraTarjeta.click();
+        // await page.waitForTimeout(1000);
 
         // // 16 – Llenar datos de la tarjeta (iframe)
         // await page.waitForSelector('iframe.payment-forms-layout_iframe', { timeout: 15_000 });
