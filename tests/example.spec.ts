@@ -203,7 +203,6 @@ test.describe('Comenzo prueba avianca', () => {
         await page.waitForSelector(".passenger_data_group");
         await takeScreenshot("inicio-de-llenado-pagina-de-pasajeros");
 
-        //seteando los valores
         await page.evaluate(() => {
             const userNamesData: Array<string> = [
                 "john doe",
@@ -248,42 +247,79 @@ test.describe('Comenzo prueba avianca', () => {
                 "334455"
             ];
 
-            const getDataRandom = (data: Array<string> = []) => {
+            const getDataRandom = (data: Array<string> = []): string => {
                 return data[Math.floor(Math.random() * data.length)];
             }
 
-            const getValueElement = (element: HTMLInputElement) => {
-                let value = null;
+            const getValueElement = (element: HTMLInputElement): string => {
+                let value: string | null = null;
                 if (element.name === "email") {
+                    console.log('----ENTRO-----');
                     value = getDataRandom(emailsData);
+                }
+                else if (element.name === "confirmEmail") {
+                    value = getDataRandom(emailsData);
+                    console.log('----ENTRO-----');
                 }
                 else if (element.name === "phone_phoneNumberId") {
                     value = getDataRandom(phoneNumbersData);
+                    console.log('----ENTRO-----');
                 }
                 else if (element.id.includes("IdFirstName")) {
                     value = getDataRandom(userNamesData);
+                    console.log('----ENTRO-----');
                 }
                 else {
                     value = getDataRandom(lastNamesData);
+                    console.log('----ENTRO-----lastNamesData' + lastNamesData);
                 }
                 return value;
             }
 
-            const setValuesDefaultAutoForm = () => {
+            const getButtonAndClickItem = () => {
+                const listOptions = document.querySelector(".ui-dropdown_list");
+                const buttonElement = listOptions?.querySelector(".ui-dropdown_item>button") as HTMLButtonElement;
+                buttonElement.click();
+            }
+
+            const setValuesDefaultAutoForm = async () => {
                 const elements = document.querySelectorAll('.ui-input');
-                console.log("elements: ", elements);
-                Array.from(elements).forEach((element, index) => {
+                Array.from(elements).forEach((element) => {
                     if (element.tagName === "BUTTON") {
-                        (element as HTMLButtonElement).click();
+                        const elementButton = element as HTMLButtonElement;
+                        elementButton.click();
                         const listOptions = document.querySelector(".ui-dropdown_list");
-                        (listOptions?.querySelector(".ui-dropdown_item>button") as HTMLButtonElement).click();
+                        (listOptions?.querySelector(".ui-dropdown_item>button") as HTMLButtonElement)?.click();
+                        console.log('****element.id****' + element.id);
+                        if (element.id === "passengerId") {
+                            elementButton.click();
+                            setTimeout(() => {
+                                console.log('++++++++++Entro++++++++');
+                                getButtonAndClickItem();
+                            }, 1000);
+                        }
+                        else if (element.id === 'phone_prefixPhoneId') {
+                            setTimeout(() => {
+                                console.log('++++++++++Entro++++++++');
+                                elementButton.click();
+
+                                getButtonAndClickItem();
+                            }, 1000);
+                        }
+                        else {
+                            const cas = document.querySelector('#acceptNewCheckbox') as HTMLButtonElement;
+                            cas.click();
+                            elementButton.click();
+                            getButtonAndClickItem();
+                        }
                     }
                     else if (element.tagName === "INPUT") {
+                        const elementInput = element as HTMLInputElement;
                         const containers = document.querySelectorAll(".ui-input-container");
                         Array.from(containers).forEach(e => { e.classList.add("is-focused") });
-                        let eventBlur = new Event("blur");
-                        let eventFocus = new Event("focus");
-                        (element as HTMLInputElement).value = getValueElement(element as HTMLInputElement);
+                        let eventBlur: Event = new Event("blur");
+                        let eventFocus: Event = new Event("focus");
+                        elementInput.value = getValueElement(elementInput);
                         ['change', 'input'].forEach(event => {
                             let handleEvent = new Event(event, { bubbles: true, cancelable: false });
                             element.dispatchEvent(handleEvent);
@@ -292,11 +328,24 @@ test.describe('Comenzo prueba avianca', () => {
                         setTimeout(() => {
                             element.dispatchEvent(eventBlur);
                             Array.from(containers).forEach(e => { e.classList.remove("is-focused") });
-                        }, 100);
+                        }, 1000);
                     }
                 });
-                const fieldAuthoritation = document.querySelector("#acceptNewCheckbox") as HTMLInputElement;
-                if (fieldAuthoritation) fieldAuthoritation.checked = true;
+
+                await expect(page.locator('id=email')).toBeVisible();
+                await (page.locator('id=email')).fill('test@gmail.com');
+
+                await expect(page.locator('id=confirmEmail')).toBeVisible();
+                await (page.locator('id=confirmEmail')).fill('test@gmail.com');
+                //const fieldAuthoritation = document.querySelector("#acceptNewCheckbox") as HTMLInputElement;
+                // if (fieldAuthoritation) fieldAuthoritation.checked = true;
+
+                await page.waitForSelector("id=acceptNewCheckbox");
+                await expect(page.locator('id=acceptNewCheckbox')).toBeVisible();
+                await (page.locator('id=acceptNewCheckbox')).click()
+
+                await expect(page.locator('id=sendNewsLetter')).toBeVisible();
+                await (page.locator('id=sendNewsLetter')).click();
             }
             setValuesDefaultAutoForm();
         });
