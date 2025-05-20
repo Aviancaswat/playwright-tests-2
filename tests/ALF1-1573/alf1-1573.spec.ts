@@ -131,31 +131,27 @@ test.describe('Comenzo prueba avianca', () => {
         await origen.fill(copys['ciudad_origen']);
         await origen.press('Enter');
         await (page.locator('id=' + copys['ciudad_origen'])).click()
-        await takeScreenshot('03-ciudad-origen');
 
         const destino = page.getByPlaceholder(copys[idioma].destino);
         await destino.click();
         await destino.fill(copys['ciudad_destino']);
         await destino.press('Enter');
         await (page.locator('id=' + copys['ciudad_destino'])).click();
-        await takeScreenshot('04-ciudad-destino');
 
         const fechaIda = await page.locator('id=departureInputDatePickerId')
         fechaIda.click();
         await page.locator('span').filter({ hasText: copys['fecha_salida'] }).click();
-        await takeScreenshot('05-fecha-ida');
 
         await page.locator('span').filter({ hasText: copys['fecha_llegada'] }).click();
-        await takeScreenshot('06-fecha-vuelta');
 
         await page.getByRole('button', { name: '' }).nth(1).click();
         const confirmar = await page.locator('div#paxControlSearchId > div > div:nth-of-type(2) > div > div > button')
         confirmar.click();
 
-        await takeScreenshot('07-seleccion-pasajeros');
+
         await expect(page.getByRole('button', { name: copys[idioma].buscar, exact: true })).toBeVisible()
         await page.getByRole('button', { name: copys[idioma].buscar, exact: true }).click();
-        await takeScreenshot('08-buscar');
+
 
         await page.waitForSelector('#pageWrap');
         await expect(page.locator(".journey_price_fare-select_label-text").first()).toBeVisible();
@@ -163,7 +159,7 @@ test.describe('Comenzo prueba avianca', () => {
         await page.waitForSelector(".journey_fares");
         await page.locator('.journey_fares').first().locator('.light-basic.cro-new-basic-button').click();
         //  await page.locator('.journey_fares').first().locator('.fare-flex').click();
-        await takeScreenshot('09-seleccion-vuelo-ida');
+
 
         await page.waitForTimeout(1500);
         const isVisibleModal = await page.locator("#FB310").first().isVisible();
@@ -178,7 +174,6 @@ test.describe('Comenzo prueba avianca', () => {
         await expect(containerVuelta).toBeVisible();
         // await expect(page.locator('.journey_price_fare-select_label-text').nth(22)).toBeVisible();
         await containerVuelta.locator(".journey_price_fare-select_label-text").first().click();
-        await takeScreenshot('13-seleccion-vuelo-regreso');
         await containerVuelta.locator('.journey_fares').first().locator('.light-basic.cro-new-basic-button').click();
         await page.waitForTimeout(1500);
 
@@ -189,8 +184,6 @@ test.describe('Comenzo prueba avianca', () => {
             await page.locator(".cro-button.cro-no-accept-upsell-button").first().click();
         }
 
-        await takeScreenshot('13-resumen-de-vuelos-seleccionados');
-
         await page.waitForSelector(".trip-summary");
         const buttonConfirmResumen = page.locator(".button.page_button.btn-action");
         await expect(buttonConfirmResumen).toBeVisible();
@@ -199,7 +192,6 @@ test.describe('Comenzo prueba avianca', () => {
 
         //página de pasajeros
         await page.waitForSelector(".passenger_data_group");
-        await takeScreenshot("inicio-de-llenado-pagina-de-pasajeros");
 
         await page.evaluate(() => {
             const userNamesData: Array<string> = [
