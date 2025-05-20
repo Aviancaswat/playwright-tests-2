@@ -149,8 +149,6 @@ test.describe('Comenzo prueba avianca', () => {
         await takeScreenshot('06-fecha-vuelta');
 
         await page.getByRole('button', { name: '' }).nth(1).click();
-        await page.getByRole('button', { name: '' }).nth(2).click();
-        await page.getByRole('button', { name: '' }).nth(3).click();
         const confirmar = await page.locator('div#paxControlSearchId > div > div:nth-of-type(2) > div > div > button')
         confirmar.click();
 
