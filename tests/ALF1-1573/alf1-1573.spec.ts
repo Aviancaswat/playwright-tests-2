@@ -144,6 +144,8 @@ test.describe('Comenzo prueba avianca', () => {
         await page.locator('span').filter({ hasText: copys['fecha_llegada'] }).click();
 
         await page.getByRole('button', { name: '' }).nth(1).click();
+        await page.getByRole('button', { name: '' }).nth(2).click();
+        await page.getByRole('button', { name: '' }).nth(3).click();
         const confirmar = await page.locator('div#paxControlSearchId > div > div:nth-of-type(2) > div > div > button')
         confirmar.click();
 
