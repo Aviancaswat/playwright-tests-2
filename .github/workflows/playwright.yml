@@ -34,13 +34,11 @@ on:
       - main
       - master
       - alf1-1573
-      - alf1-1520
   pull_request:
     branches:
       - main
       - master
       - alf1-1573
-      - alf1-1520
   workflow_dispatch: {}
 
 jobs:
