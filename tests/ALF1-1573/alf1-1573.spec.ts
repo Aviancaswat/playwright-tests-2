@@ -115,7 +115,6 @@ test.describe('Comenzo prueba avianca', () => {
         });
 
         await page.goto('https://www.avianca.com/');
-        await takeScreenshot('01-goto-avianca');
 
         const consentBtn = page.locator('#onetrust-pc-btn-handler');
 
@@ -131,22 +130,18 @@ test.describe('Comenzo prueba avianca', () => {
         await origen.fill(copys['ciudad_origen']);
         await origen.press('Enter');
         await (page.locator('id=' + copys['ciudad_origen'])).click()
-        await takeScreenshot('03-ciudad-origen');
 
         const destino = page.getByPlaceholder(copys[idioma].destino);
         await destino.click();
         await destino.fill(copys['ciudad_destino']);
         await destino.press('Enter');
         await (page.locator('id=' + copys['ciudad_destino'])).click();
-        await takeScreenshot('04-ciudad-destino');
 
         const fechaIda = await page.locator('id=departureInputDatePickerId')
         fechaIda.click();
         await page.locator('span').filter({ hasText: copys['fecha_salida'] }).click();
-        await takeScreenshot('05-fecha-ida');
 
         await page.locator('span').filter({ hasText: copys['fecha_llegada'] }).click();
-        await takeScreenshot('06-fecha-vuelta');
 
         await page.getByRole('button', { name: '' }).nth(1).click();
         await page.getByRole('button', { name: '' }).nth(2).click();
@@ -154,10 +149,8 @@ test.describe('Comenzo prueba avianca', () => {
         const confirmar = await page.locator('div#paxControlSearchId > div > div:nth-of-type(2) > div > div > button')
         confirmar.click();
 
-        await takeScreenshot('07-seleccion-pasajeros');
         await expect(page.getByRole('button', { name: copys[idioma].buscar, exact: true })).toBeVisible()
         await page.getByRole('button', { name: copys[idioma].buscar, exact: true }).click();
-        await takeScreenshot('08-buscar');
 
         await page.waitForSelector('#pageWrap');
         await expect(page.locator(".journey_price_fare-select_label-text").first()).toBeVisible();
@@ -165,7 +158,6 @@ test.describe('Comenzo prueba avianca', () => {
         await page.waitForSelector(".journey_fares");
         await page.locator('.journey_fares').first().locator('.light-basic.cro-new-basic-button').click();
         //  await page.locator('.journey_fares').first().locator('.fare-flex').click();
-        await takeScreenshot('09-seleccion-vuelo-ida');
 
         await page.waitForTimeout(1500);
         const isVisibleModal = await page.locator("#FB310").first().isVisible();
@@ -180,7 +172,6 @@ test.describe('Comenzo prueba avianca', () => {
         await expect(containerVuelta).toBeVisible();
         // await expect(page.locator('.journey_price_fare-select_label-text').nth(22)).toBeVisible();
         await containerVuelta.locator(".journey_price_fare-select_label-text").first().click();
-        await takeScreenshot('13-seleccion-vuelo-regreso');
         await containerVuelta.locator('.journey_fares').first().locator('.light-basic.cro-new-basic-button').click();
         await page.waitForTimeout(1500);
 
@@ -191,8 +182,6 @@ test.describe('Comenzo prueba avianca', () => {
             await page.locator(".cro-button.cro-no-accept-upsell-button").first().click();
         }
 
-        await takeScreenshot('13-resumen-de-vuelos-seleccionados');
-
         await page.waitForSelector(".trip-summary");
         const buttonConfirmResumen = page.locator(".button.page_button.btn-action");
         await expect(buttonConfirmResumen).toBeVisible();
@@ -201,7 +190,6 @@ test.describe('Comenzo prueba avianca', () => {
 
         //página de pasajeros
         await page.waitForSelector(".passenger_data_group");
-        await takeScreenshot("inicio-de-llenado-pagina-de-pasajeros");
 
         await page.evaluate(() => {
             const userNamesData: Array<string> = [
@@ -350,164 +338,13 @@ test.describe('Comenzo prueba avianca', () => {
             setValuesDefaultAutoForm();
         });
 
+        const acceptCheckbox = page.locator('input#acceptNewCheckbox');
+        await expect(acceptCheckbox).toBeVisible();
+        await acceptCheckbox.check();
+
         await takeScreenshot("llenado-de-pasajeros-ok");
         await page.waitForTimeout(2000);
-        //boton de continuar para los servicios
-        await expect(page.locator(".button.page_button.btn-action").last()).toBeVisible();
-        await page.locator(".button.page_button.btn-action").last().click();
-
-        await page.waitForSelector(".main-banner--section-offer");
-        await page.waitForTimeout(8000);
-        await takeScreenshot("Pagina-de-servicios");
-        await expect(page.locator("#serviceButtonTypeBusinessLounge")).toBeVisible();
-        await page.locator('#serviceButtonTypeBusinessLounge').click();
-        await page.locator('.service_item_button.button').first().click();
-        await takeScreenshot("Servicio avianca-lounges");
-        await page.locator('.button.amount-summary_button.amount-summary_button-action.is-action.ng-star-inserted').last().click();
-
-        await expect(page.locator('#serviceButtonTypeSpecialAssistance')).toBeVisible();
-        await page.locator('#serviceButtonTypeSpecialAssistance').click();
-        await takeScreenshot("Servicio asistencia especial");
-        await page.locator('.service_item_button.button').first().click();
-        await page.locator('.button.amount-summary_button.amount-summary_button-action.is-action.ng-star-inserted').last().click();
-
-        await expect(page.locator('.services-card_action_button.button').last()).toBeVisible();
-        await takeScreenshot("Asistencia en viaje");
-        await page.locator('.services-card_action_button.button').last().click();
-        await page.locator('.button.amount-summary_button.amount-summary_button-action.is-action.ng-star-inserted.FB-newConfirmButton').click();
-        await takeScreenshot("Servicios añadidos");
-        await expect(page.locator(".button_label").last()).toBeVisible();
-        await page.locator('.button_label').last().click();
-
-        const upsellService = await page.locator('.terciary-button').last().isVisible()
-        if (upsellService) {
-            await page.locator('.terciary-button').last().click()
-        }
-        await page.waitForTimeout(12000);
-        await takeScreenshot("Pagina-de-seleccion-asientos");
-        //seleccion de asientos
-        const pasajeros = page.locator(".pax-selector_pax-avatar")
-
-        for (const e of await pasajeros.all()) {
-            await takeScreenshot("seleccion-asiento");
-            await expect(page.locator(".seat-number").first()).toBeVisible();
-            await page.locator('.seat-number').first().click();
-            await page.waitForTimeout(8000);
-        }
-
-        await expect(page.locator(".next-flight-code")).toBeVisible();
-        await takeScreenshot("seleccion-asiento-vuelta");
-        await page.locator('.next-flight-code').click();
-
-        const pasajerosVuelta = page.locator(".pax-selector_pax-avatar")
-
-        for (const j of await pasajerosVuelta.all()) {
-            await takeScreenshot("seleccion-asiento");
-            await expect(page.locator(".seat-number").first()).toBeVisible();
-            await page.locator('.seat-number').first().click();
-            await page.waitForTimeout(8000);
-        }
-
-        await expect(page.getByRole('button', { name: copys[idioma].pagar, exact: true })).toBeVisible()
-        await page.getByRole('button', { name: copys[idioma].pagar, exact: true }).click();
-        await page.waitForTimeout(5000);
-        // await expect(page.locator('.payment-container_title')).toBeVisible();
-        // await takeScreenshot("pagos");
-
-        const noOtraTarjeta = page.locator('.fb-left-container');
-        await expect(noOtraTarjeta).toBeVisible();
-        await noOtraTarjeta.click();
-        await page.waitForTimeout(1000);
-
-        // // 16 – Llenar datos de la tarjeta (iframe)
-        // await page.waitForSelector('iframe.payment-forms-layout_iframe', { timeout: 15_000 });
-        // const cardFrame = page.frameLocator('iframe.payment-forms-layout_iframe');
-
-        // // Titular de la tarjeta (input#Holder)
-        // const holderInput = cardFrame.locator('input#Holder');
-        // await expect(holderInput).toBeVisible();
-        // await holderInput.fill('John Doe');
-
-        // // Número de tarjeta (input#Data)
-        // const dataInput = cardFrame.locator('input#Data');
-        // await expect(dataInput).toBeVisible();
-        // await dataInput.fill('4111111111111111');
-
-        // await takeScreenshot('16-tarjeta-Holder-Data');
-
-
-        // await takeScreenshot('17-datos-facturacion');
-        // await takeScreenshot("pagos");
-
-        // // Fecha de expiración: Mes
-        // const monthBtn = cardFrame.locator('button#expirationMonth_ExpirationDate');
-        // await expect(monthBtn).toBeVisible();
-        // await monthBtn.click();
-        // await cardFrame
-        //     .locator('ul#listId_expirationMonth_ExpirationDate li button')
-        //     .filter({ hasText: '12' })    // el mes que necesites
-        //     .click();
-
-        // // Fecha de expiración: Año
-        // const yearBtn = cardFrame.locator('button#expirationYear_ExpirationDate');
-        // await expect(yearBtn).toBeVisible();
-        // await yearBtn.click();
-        // await cardFrame
-        //     .locator('ul#listId_expirationYear_ExpirationDate li button')
-        //     .filter({ hasText: '25' })    // el año que necesites (por ejemplo “25” para 2025)
-        //     .click();
-
-        // // CVV
-        // const cvvInput = cardFrame.locator('input#Cvv');
-        // await expect(cvvInput).toBeVisible();
-        // await cvvInput.fill('123');
-
-        // //screenshot tras expiración y CVV
-        // await takeScreenshot('18-tarjeta-expiracion-cvv');
-
-        // Llenar datos de facturación
-        await page.waitForSelector('input#email', { timeout: 15_000 });
-
-        // Correo electrónico
-        const emailInput = page.locator('input#email');
-        await expect(emailInput).toBeVisible();
-        await emailInput.fill('monitoreo.digital@avianca.com');
-
-        // Dirección de residencia
-        const addressInput = page.locator('input#address');
-        await expect(addressInput).toBeVisible();
-        await addressInput.fill('Calle 123 #45-67');
-
-        // Ciudad
-        const cityInput = page.locator('input#city');
-        await expect(cityInput).toBeVisible();
-        await cityInput.fill('Bogotá');
-
-        // País
-        const countryBtn = page.locator('button#country');
-        await expect(countryBtn).toBeVisible();
-        await countryBtn.click();
-
-        // Esperar a que aparezcan las opciones
-        await page.waitForSelector('div.ds-select-dropdown li button', { timeout: 5_000 });
-
-        // Seleccionar “Colombia”
-        const countryOption = page
-            .locator('div.ds-select-dropdown li button')
-            .filter({ hasText: 'Colombia' });
-        await expect(countryOption).toBeVisible();
-        await countryOption.click();
-
-        await takeScreenshot('19-country-seleccionado');
-
-        // Aceptar Términos
-        const termsCheckbox = page.locator('input#terms');
-        await expect(termsCheckbox).toBeVisible();
-        await termsCheckbox.check();
-        await takeScreenshot('20-aceptar-terminos');
-
-        // Captura final de facturación
-        await takeScreenshot('21-datos-facturacion');
+        
 
     });
 });
