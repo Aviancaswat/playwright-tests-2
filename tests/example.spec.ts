@@ -43,8 +43,8 @@ getLang: () => Lang
 const copys: copysType = {
 idioma: 'es' as Lang,
 pais: 'CO',
-fecha_salida: 'may 24',
-fecha_llegada: 'may 28',
+fecha_salida: 'may 26',
+fecha_llegada: 'may 29',
 ciudad_origen: 'CLO',
 ciudad_destino: 'BOG',
 es: {
@@ -115,7 +115,7 @@ const { chromium } = require("playwright-extra");
 //chromium.use(stealth);
 // Replace with your res
 const browser = await chromium.launch({
-        headless: true,
+        headless: false,
         args: ['--disable-blink-features=AutomationControlled',
                '--enable-webgl',
                '--use-gl=swiftshader',
@@ -156,6 +156,7 @@ await page.locator('.save-preference-btn-handler.onetrust-close-btn-handler').cl
 }
  
 await expect(page.locator('.content-wrap')).toBeVisible();
+await page.waitForSelector("#originBtn");
 await expect(page.locator('#originBtn')).toBeVisible();
 const origen = page.getByPlaceholder((copys[idioma]).origen);
 await page.locator('button#originBtn').click({ delay: getRandomDelay()} );
@@ -164,6 +165,7 @@ await origen.press('Enter');
 await (page.locator('id=' + copys['ciudad_origen'])).click({ delay: getRandomDelay()} )
 await takeScreenshot('03-ciudad-origen');
  
+await expect(page.getByPlaceholder(copys[idioma].destino)).toBeVisible();
 const destino = page.getByPlaceholder(copys[idioma].destino);
 await destino.click({ delay: getRandomDelay()} );
 await destino.fill(copys['ciudad_destino'], { delay: getRandomDelay() });
@@ -171,11 +173,12 @@ await destino.press('Enter');
 await (page.locator('id=' + copys['ciudad_destino'])).click({ delay: getRandomDelay()} );
 await takeScreenshot('04-ciudad-destino');
  
+await page.waitForSelector("#departureInputDatePickerId");
 const fechaIda = await page.locator('id=departureInputDatePickerId')
 fechaIda.click({ delay: getRandomDelay()} );
 await page.locator('span').filter({ hasText: copys['fecha_salida'] }).click({ delay: getRandomDelay()} );
 await takeScreenshot('05-fecha-ida');
- 
+await page.waitForTimeout(3000);
 await page.locator('span').filter({ hasText: copys['fecha_llegada'] }).click({ delay: getRandomDelay()} );
 await takeScreenshot('06-fecha-vuelta');
  
