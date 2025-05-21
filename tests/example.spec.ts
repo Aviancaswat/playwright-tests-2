@@ -78,8 +78,6 @@ const copys: copysType = {
     getLang: () => copys.idioma
 };
 
-test.use({ video: 'on' });
-
 test.describe('Comenzo prueba avianca', () => {
 
     test('prueba home avianca', async ({ }, testInfo) => {
@@ -127,6 +125,7 @@ test.describe('Comenzo prueba avianca', () => {
         const context = await browser.newContext({
             userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
             viewport: { width: 1280, height: 720 },
+            recordVideo: { dir: 'videos/' },
             locale: 'en-US',
             timezoneId: 'America/New_York',
             deviceScaleFactor: 1,
@@ -512,6 +511,14 @@ test.describe('Comenzo prueba avianca', () => {
 
         // Captura final de facturación
         await takeScreenshot('21-datos-facturacion');
+
+        await context.close();
+        const videoPath = await page.video().path();
+        await testInfo.attach('video', {
+            path: videoPath,
+            contentType: 'video/webm',
+        });
+        await browser.close();
 
     });
 });
