@@ -388,6 +388,14 @@ test.describe('Comenzo prueba avianca', () => {
         });
 
         await takeScreenshot("llenado-de-pasajeros-ok");
+        // Esperar a que aparezca el modal
+        await page.waitForSelector('ngb-modal-window', { timeout: 5_000 });
+
+        // Localizar el botón “OK” del footer y hacer click
+        const okButton = page.locator('button.modal_footer_button-action', { hasText: 'OK' });
+        await expect(okButton).toBeVisible();
+        await okButton.click({ delay: getRandomDelay() });
+
         await page.waitForTimeout(2000);
         //boton de continuar para los servicios
         await expect(page.locator(".button.page_button.btn-action").last()).toBeVisible();
