@@ -1,4 +1,4 @@
-import { test, expect, webkit, chromium } from '@playwright/test';
+import { test, expect, webkit, chromium, errors } from '@playwright/test';
 
 type Lang = 'es' | 'en' | 'pt' | 'fr';
 
@@ -388,17 +388,22 @@ test.describe('Comenzo prueba avianca', () => {
         });
 
         await takeScreenshot("llenado-de-pasajeros-ok");
-        // // Esperar a que aparezca el modal
-        // await page.waitForSelector('ngb-modal-window', { timeout: 5_000 });
-        // // Localizar el botón “OK” del footer y hacer click
-        // const okButton = page.locator('button.modal_footer_button-action', { hasText: 'OK' });
-        // await expect(okButton).toBeVisible();
-        // await okButton.click({ delay: getRandomDelay() });
 
-        await page.waitForTimeout(2000);
-        //boton de continuar para los servicios
+        try {
+            await page.waitForSelector('ngb-modal-window', { timeout: 5_000, state: 'visible' });
+            await page.locator('button.modal_footer_button-action', { hasText: 'OK' })
+                .click({ delay: getRandomDelay() });
+        } catch (e) {
+            if (!(e instanceof errors.TimeoutError)) throw e;
+        }
+
+
+        await page.waitForTimeout(2_000);
+
+        // Botón de continuar para los servicios
         await expect(page.locator(".button.page_button.btn-action").last()).toBeVisible();
         await page.locator(".button.page_button.btn-action").last().click({ delay: getRandomDelay() });
+
 
         await page.waitForSelector(".main-banner--section-offer");
         await page.waitForTimeout(8000);
