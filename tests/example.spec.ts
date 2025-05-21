@@ -389,14 +389,13 @@ test.describe('Comenzo prueba avianca', () => {
 
         await takeScreenshot("llenado-de-pasajeros-ok");
 
-        try {
-            await page.waitForSelector('ngb-modal-window', { timeout: 5_000, state: 'visible' });
-            await page.locator('button.modal_footer_button-action', { hasText: 'OK' })
-                .click({ delay: getRandomDelay() });
-        } catch (e) {
-            if (!(e instanceof errors.TimeoutError)) throw e;
+        const isVisibleModalError = await page.locator("button.modal_footer_button-action").first().isVisible();
+        if (isVisibleModalError) {
+            await page.waitForSelector('ngb-modal-window', { timeout: 5_000 });
+            const okButton = page.locator('button.modal_footer_button-action', { hasText: 'OK' });
+            await expect(okButton).toBeVisible();
+            await okButton.click({ delay: getRandomDelay() });
         }
-
 
         await page.waitForTimeout(2_000);
 
