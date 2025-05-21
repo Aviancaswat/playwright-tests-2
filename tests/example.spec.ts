@@ -78,6 +78,8 @@ const copys: copysType = {
     getLang: () => copys.idioma
 };
 
+test.use({ video: 'on' });
+
 test.describe('Comenzo prueba avianca', () => {
 
     test('prueba home avianca', async ({ }, testInfo) => {
