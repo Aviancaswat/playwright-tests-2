@@ -1,4 +1,4 @@
-import { test, expect, webkit, chromium, errors } from '@playwright/test';
+import { test, expect, webkit, chromium } from '@playwright/test';
 
 type Lang = 'es' | 'en' | 'pt' | 'fr';
 
@@ -125,7 +125,6 @@ test.describe('Comenzo prueba avianca', () => {
         const context = await browser.newContext({
             userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
             viewport: { width: 1280, height: 720 },
-            recordVideo: { dir: 'videos/' },
             locale: 'en-US',
             timezoneId: 'America/New_York',
             deviceScaleFactor: 1,
@@ -156,6 +155,17 @@ test.describe('Comenzo prueba avianca', () => {
             await page.locator('.save-preference-btn-handler.onetrust-close-btn-handler').click({ delay: getRandomDelay() });
         }
 
+
+        const intervalId = setInterval(async () => {
+            //console.log('entro a intervalo playwright');
+            const isVisibleModalError = await page.locator(".action-message_container").isVisible();
+            if (isVisibleModalError) {
+                await expect(page.locator(".close")).toBeVisible();
+                await page.locator(".close").click();
+            }
+        }, 500)
+
+
         await expect(page.locator('.content-wrap')).toBeVisible();
         await page.waitForSelector("#originBtn");
         await expect(page.locator('#originBtn')).toBeVisible();
@@ -165,7 +175,7 @@ test.describe('Comenzo prueba avianca', () => {
         await origen.press('Enter');
         await (page.locator('id=' + copys['ciudad_origen'])).click({ delay: getRandomDelay() })
         await takeScreenshot('03-ciudad-origen');
-
+        await page.waitForTimeout(2000);
         await expect(page.getByPlaceholder(copys[idioma].destino)).toBeVisible();
         const destino = page.getByPlaceholder(copys[idioma].destino);
         await destino.click({ delay: getRandomDelay() });
@@ -198,6 +208,7 @@ test.describe('Comenzo prueba avianca', () => {
         await takeScreenshot('08-buscar');
 
         await page.waitForSelector('#pageWrap');
+        await page.waitForSelector('.journey_price_fare-select_label-text');
         await expect(page.locator(".journey_price_fare-select_label-text").first()).toBeVisible();
         await page.locator('.journey_price_fare-select_label-text').first().click({ delay: getRandomDelay() });
         await page.waitForSelector(".journey_fares");
@@ -390,20 +401,11 @@ test.describe('Comenzo prueba avianca', () => {
 
         await takeScreenshot("llenado-de-pasajeros-ok");
 
-        const isVisibleModalError = await page.locator("button.modal_footer_button-action").first().isVisible();
-        if (isVisibleModalError) {
-            await page.waitForSelector('ngb-modal-window', { timeout: 5_000 });
-            const okButton = page.locator('button.modal_footer_button-action', { hasText: 'OK' });
-            await expect(okButton).toBeVisible();
-            await okButton.click({ delay: getRandomDelay() });
-        }
 
-        await page.waitForTimeout(2_000);
-
-        // Botón de continuar para los servicios
+        await page.waitForTimeout(2000);
+        //boton de continuar para los servicios
         await expect(page.locator(".button.page_button.btn-action").last()).toBeVisible();
         await page.locator(".button.page_button.btn-action").last().click({ delay: getRandomDelay() });
-
 
         await page.waitForSelector(".main-banner--section-offer");
         await page.waitForTimeout(8000);
@@ -443,7 +445,7 @@ test.describe('Comenzo prueba avianca', () => {
             await page.locator('.seat-number').first().click({ delay: getRandomDelay() });
             await page.waitForTimeout(8000);
         }
-
+        await page.waitForSelector(".next-flight-code");
         await expect(page.locator(".next-flight-code")).toBeVisible();
         await takeScreenshot("seleccion-asiento-vuelta");
         await page.locator('.next-flight-code').click({ delay: getRandomDelay() });
@@ -511,14 +513,6 @@ test.describe('Comenzo prueba avianca', () => {
 
         // Captura final de facturación
         await takeScreenshot('21-datos-facturacion');
-
-        await context.close();
-        const videoPath = await page.video().path();
-        await testInfo.attach('video', {
-            path: videoPath,
-            contentType: 'video/webm',
-        });
-        await browser.close();
 
     });
 });
