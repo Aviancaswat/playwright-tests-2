@@ -107,13 +107,16 @@ test.describe('Comenzo prueba avianca', () => {
         });
         await page.goto('https://www.avianca.com/' + idioma + '/');
         await takeScreenshot('01-goto-avianca');
-        const milesCheckbox = page.locator('.FB1491__label__compare__miles');
-        if (await milesCheckbox.isVisible()) {
-            await milesCheckbox.click();
-            await milesCheckbox.isChecked();
+        const consentBtn = page.locator('#onetrust-pc-btn-handler');
+        if (await consentBtn.isVisible()) {
+            await consentBtn.click();
+            await page.locator('.save-preference-btn-handler.onetrust-close-btn-handler').click();
         }
         await expect(page.locator('.content-wrap')).toBeVisible();
-
-        await page.locator('.divButtontext').first().screenshot({ path: 'ALF1-1491.png' });
+        const milesCheckbox = page.locator('#FB1491__checkbox__compare__miles');
+        await milesCheckbox.isVisible();
+        await milesCheckbox.check();
+        await expect(milesCheckbox).toBeChecked();
+        await takeScreenshot('ALF1-1491.png');
     });
 });
