@@ -43,8 +43,8 @@ getLang: () => Lang
 const copys: copysType = {
 idioma: 'es' as Lang,
 pais: 'CO',
-fecha_salida: 'may 28',
-fecha_llegada: 'may 29',
+fecha_salida: 'jul 10',
+fecha_llegada: 'jul 17',
 ciudad_origen: 'CLO',
 ciudad_destino: 'BOG',
 es: {
