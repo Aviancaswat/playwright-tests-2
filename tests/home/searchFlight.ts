@@ -18,7 +18,7 @@ export async function searchFlight(page: Page, takeScreenshot: any, copys: any, 
     const destino = page.getByPlaceholder(copys[idioma].destino);
     await destino.click({ delay: getRandomDelay() });
     await destino.fill(copys['ciudad_destino']);
-    await destino.press('Enter');
+    // await destino.press('Enter');
     await (page.locator('id=' + copys['ciudad_destino'])).click({ delay: getRandomDelay() });
     await takeScreenshot('04-ciudad-destino');
 

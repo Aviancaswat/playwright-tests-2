@@ -1,6 +1,8 @@
 import { test, expect, webkit, chromium } from '@playwright/test';
 import { searchFlight } from './home/searchFlight';
 import { acceptCookies } from './home/home';
+import { departureFlights } from './booking/departureFlights';
+import { booking } from './booking/booking';
 
 type Lang = 'es' | 'en' | 'pt' | 'fr';
 
@@ -48,7 +50,7 @@ const copys: copysType = {
     fecha_salida: 'jul 10',
     fecha_llegada: 'jul 17',
     ciudad_origen: 'CLO',
-    ciudad_destino: 'BOG',
+    ciudad_destino: 'MDE',
     es: {
         origen: 'Origen',
         destino: 'Hacia',
@@ -117,7 +119,7 @@ test.describe('Comenzo prueba avianca', () => {
         //chromium.use(stealth);
         // Replace with your res
         const browser = await chromium.launch({
-            headless: true,
+            headless: false,
             args: ['--disable-blink-features=AutomationControlled',
                 '--enable-webgl',
                 '--use-gl=swiftshader',
@@ -150,64 +152,27 @@ test.describe('Comenzo prueba avianca', () => {
         // Function to generate random delays between 50ms and 200ms
         await acceptCookies(page, getRandomDelay);
 
-        // const intervalId = setInterval(async () => {
-        //     //console.log('entro a intervalo playwright');
-        //     if (page) {
-        //         const isVisibleModalError = await page.locator(".action-message_container").isVisible();
-        //         if (isVisibleModalError) {
-        //             await page.waitForTimeout(1500);
-        //             await takeScreenshot('error popup');
-        //             await page.waitForTimeout(1500);
-        //             await expect(page.locator(".close")).toBeVisible();
-        //             await page.locator(".close").click();
-        //         }
-        //     }
+        const intervalId = setInterval(async () => {
+            //console.log('entro a intervalo playwright');
+            if (page) {
+                const isVisibleModalError = await page.locator(".action-message_container").isVisible();
+                if (isVisibleModalError) {
+                    await page.waitForTimeout(1500);
+                    await takeScreenshot('error popup');
+                    await page.waitForTimeout(1500);
+                    await expect(page.locator(".close")).toBeVisible();
+                    await page.locator(".close").click();
+                }
+            }
 
-        // }, 500)
+        }, 500)
 
 
         await searchFlight(page, takeScreenshot, copys, idioma);
 
-        await page.waitForSelector('#pageWrap');
-        await page.waitForSelector('.journey_price_fare-select_label-text');
-        await expect(page.locator(".journey_price_fare-select_label-text").first()).toBeVisible();
-        await page.locator('.journey_price_fare-select_label-text').first().click({ delay: getRandomDelay() });
-        await page.waitForSelector(".journey_fares");
-        await page.locator('.journey_fares').first().locator('.light-basic.cro-new-basic-button').click({ delay: getRandomDelay() });
-        // await page.locator('.journey_fares').first().locator('.fare-flex').click();
-        await takeScreenshot('09-seleccion-vuelo-ida');
+        await departureFlights(page, takeScreenshot);
 
-        await page.waitForTimeout(1500);
-        const isVisibleModal = await page.locator("#FB310").first().isVisible();
-
-        if (isVisibleModal) {
-            await expect(page.locator(".cro-button.cro-no-accept-upsell-button")).toBeVisible();
-            await page.locator(".cro-button.cro-no-accept-upsell-button").first().click({ delay: getRandomDelay() });
-        }
-
-        await page.waitForSelector("#journeysContainerId_1", { timeout: 15000 });
-        const containerVuelta = page.locator("#journeysContainerId_1");
-        await expect(containerVuelta).toBeVisible();
-        // await expect(page.locator('.journey_price_fare-select_label-text').nth(22)).toBeVisible();
-        await containerVuelta.locator(".journey_price_fare-select_label-text").first().click({ delay: getRandomDelay() });
-        await takeScreenshot('13-seleccion-vuelo-regreso');
-        await containerVuelta.locator('.journey_fares').first().locator('.light-basic.cro-new-basic-button').click({ delay: getRandomDelay() });
-        await page.waitForTimeout(1500);
-
-        const isVisibleModal2 = await page.locator("#FB310").first().isVisible();
-
-        if (isVisibleModal2) {
-            await expect(page.locator(".cro-button.cro-no-accept-upsell-button")).toBeVisible();
-            await page.locator(".cro-button.cro-no-accept-upsell-button").first().click({ delay: getRandomDelay() });
-        }
-
-        await takeScreenshot('13-resumen-de-vuelos-seleccionados');
-
-        await page.waitForSelector(".trip-summary");
-        const buttonConfirmResumen = page.locator(".button.page_button.btn-action");
-        await expect(buttonConfirmResumen).toBeVisible();
-        buttonConfirmResumen.scrollIntoViewIfNeeded();
-        await buttonConfirmResumen.click({ delay: getRandomDelay() });
+        await booking(page, takeScreenshot);
 
         //página de pasajeros
         await page.waitForSelector(".passenger_data_group");
