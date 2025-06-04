@@ -119,7 +119,7 @@ test.describe('Comenzo prueba avianca', () => {
         //chromium.use(stealth);
         // Replace with your res
         const browser = await chromium.launch({
-            headless: true,
+            headless: false,
             args: ['--disable-blink-features=AutomationControlled',
                 '--enable-webgl',
                 '--use-gl=swiftshader',
@@ -170,7 +170,7 @@ test.describe('Comenzo prueba avianca', () => {
 
         await searchFlight(page, takeScreenshot, copys, idioma);
 
-        await departureFlights(page, takeScreenshot);
+        // await departureFlights(page, takeScreenshot);
 
         await booking(page, takeScreenshot);
 
