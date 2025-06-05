@@ -1,8 +1,11 @@
 import { test, expect, webkit, chromium } from '@playwright/test';
 import { searchFlight } from './home/searchFlight';
 import { acceptCookies } from './home/home';
-import { departureFlights } from './booking/departureFlights';
 import { booking } from './booking/booking';
+import { passengers } from './passengers/passengers';
+import { services } from './services/services';
+import { seats } from './seats/seats';
+import { payment } from './payment/payment';
 
 type Lang = 'es' | 'en' | 'pt' | 'fr';
 
@@ -119,7 +122,7 @@ test.describe('Comenzo prueba avianca', () => {
         //chromium.use(stealth);
         // Replace with your res
         const browser = await chromium.launch({
-            headless: true,
+            headless: false,
             args: ['--disable-blink-features=AutomationControlled',
                 '--enable-webgl',
                 '--use-gl=swiftshader',
@@ -152,20 +155,20 @@ test.describe('Comenzo prueba avianca', () => {
         // Function to generate random delays between 50ms and 200ms
         await acceptCookies(page, getRandomDelay);
 
-        const intervalId = setInterval(async () => {
-            //console.log('entro a intervalo playwright');
-            if (page) {
-                const isVisibleModalError = await page.locator(".action-message_container").isVisible();
-                if (isVisibleModalError) {
-                    await page.waitForTimeout(1500);
-                    await takeScreenshot('error popup');
-                    await page.waitForTimeout(1500);
-                    await expect(page.locator(".close")).toBeVisible();
-                    await page.locator(".close").click();
-                }
-            }
+        // const intervalId = setInterval(async () => {
+        //     //console.log('entro a intervalo playwright');
+        //     if (page) {
+        //         const isVisibleModalError = await page.locator(".action-message_container").isVisible();
+        //         if (isVisibleModalError) {
+        //             await page.waitForTimeout(1500);
+        //             await takeScreenshot('error popup');
+        //             await page.waitForTimeout(1500);
+        //             await expect(page.locator(".close")).toBeVisible();
+        //             await page.locator(".close").click();
+        //         }
+        //     }
 
-        }, 500)
+        // }, 500)
 
 
         await searchFlight(page, takeScreenshot, copys, idioma);
@@ -175,222 +178,57 @@ test.describe('Comenzo prueba avianca', () => {
         await booking(page, takeScreenshot);
 
         //página de pasajeros
-        await page.waitForSelector(".passenger_data_group");
-        await takeScreenshot("inicio-de-llenado-pagina-de-pasajeros");
-
-        await page.evaluate(() => {
-            const userNamesData: Array<string> = [
-                "john doe",
-                "jane smith",
-                "alexander wilson",
-                "maria gomez",
-                "roberto perez",
-                "lucia martinez",
-                "david hernandez",
-                "carla jones",
-                "luis vega",
-                "susan brown"
-            ];
-
-            const lastNamesData: Array<string> = [
-                "Doe",
-                "Smith",
-                "Wilson",
-                "Gomez",
-                "Perez",
-                "Martinez",
-                "Hernandez",
-                "Jones",
-                "Vega",
-                "Brown"
-            ];
-
-            const emailsData: Array<string> = [
-                "monitoreo.digital@avianca.com"
-            ];
-
-            const phoneNumbersData: Array<string> = [
-                "123456",
-                "987654",
-                "654321",
-                "321654",
-                "987123",
-                "456789",
-                "102938",
-                "112233",
-                "778899",
-                "334455"
-            ];
-
-            const getDataRandom = (data: Array<string> = []): string => {
-                return data[Math.floor(Math.random() * data.length)];
-            }
-
-            const getValueElement = (element: HTMLInputElement): string => {
-                let value: string | null = null;
-                if (element.name === "email") {
-                    console.log('----ENTRO-----');
-                    value = getDataRandom(emailsData);
-                }
-                else if (element.name === "confirmEmail") {
-                    value = getDataRandom(emailsData);
-                    console.log('----ENTRO-----');
-                }
-                else if (element.name === "phone_phoneNumberId") {
-                    value = getDataRandom(phoneNumbersData);
-                    console.log('----ENTRO-----');
-                }
-                else if (element.id.includes("IdFirstName")) {
-                    value = getDataRandom(userNamesData);
-                    console.log('----ENTRO-----');
-                }
-                else {
-                    value = getDataRandom(lastNamesData);
-                    console.log('----ENTRO-----lastNamesData' + lastNamesData);
-                }
-                return value;
-            }
-
-            const getButtonAndClickItem = () => {
-                const listOptions = document.querySelector(".ui-dropdown_list");
-                const buttonElement = listOptions?.querySelector(".ui-dropdown_item>button") as HTMLButtonElement;
-                buttonElement.click();
-            }
-
-            const setValuesDefaultAutoForm = async () => {
-                const elements = document.querySelectorAll('.ui-input');
-                Array.from(elements).forEach((element) => {
-                    if (element.tagName === "BUTTON") {
-
-                        const elementButton = element as HTMLButtonElement;
-                        elementButton.click();
-                        const listOptions = document.querySelector(".ui-dropdown_list");
-                        (listOptions?.querySelector(".ui-dropdown_item>button") as HTMLButtonElement)?.click();
-                        console.log('****element.id****' + element.id);
-                        if (element.id === "passengerId") {
-                            elementButton.click();
-                            setTimeout(() => {
-                                console.log('++++++++++Entro++++++++');
-                                getButtonAndClickItem();
-                            }, 1000);
-                        }
-                        else if (element.id === 'phone_prefixPhoneId') {
-                            setTimeout(() => {
-                                console.log('++++++++++Entro++++++++');
-                                elementButton.click();
-                                getButtonAndClickItem();
-                            }, 1000);
-                        }
-                        else {
-                            const checkAccept = document.querySelector('#acceptNewCheckbox') as HTMLButtonElement;
-                            checkAccept.click();
-                            elementButton.click();
-                            getButtonAndClickItem();
-                        }
-                    }
-                    else if (element.tagName === "INPUT") {
-                        const elementInput = element as HTMLInputElement;
-                        const containers = document.querySelectorAll(".ui-input-container");
-                        Array.from(containers).forEach(e => { e.classList.add("is-focused") });
-                        let eventBlur: Event = new Event("blur");
-                        let eventFocus: Event = new Event("focus");
-                        elementInput.value = getValueElement(elementInput);
-                        ['change', 'input'].forEach(event => {
-                            let handleEvent = new Event(event, { bubbles: true, cancelable: false });
-                            element.dispatchEvent(handleEvent);
-                        });
-                        element.dispatchEvent(eventFocus);
-                        setTimeout(() => {
-                            element.dispatchEvent(eventBlur);
-                            Array.from(containers).forEach(e => { e.classList.remove("is-focused") });
-                        }, 1000);
-                    }
-                });
-
-                await expect(page.locator('id=email')).toBeVisible();
-                await (page.locator('id=email')).fill('test@gmail.com');
-
-                await expect(page.locator('id=confirmEmail')).toBeVisible();
-                await (page.locator('id=confirmEmail')).fill('test@gmail.com');
-
-                await page.waitForSelector("id=acceptNewCheckbox");
-                await expect(page.locator('id=acceptNewCheckbox')).toBeVisible();
-                await (page.locator('id=acceptNewCheckbox')).click()
-
-            }
-            setValuesDefaultAutoForm();
-        });
-
-        await takeScreenshot("llenado-de-pasajeros-ok");
 
 
-        await page.waitForTimeout(2000);
-        //boton de continuar para los servicios
-        await expect(page.locator(".button.page_button.btn-action").last()).toBeVisible();
-        //await page.waitForSelector(".button.page_button.btn-action");
-        await page.locator(".button.page_button.btn-action").last().click({ delay: getRandomDelay() });
+        const userNamesData: Array<string> = [
+            "john doe",
+            "jane smith",
+            "alexander wilson",
+            "maria gomez",
+            "roberto perez",
+            "lucia martinez",
+            "david hernandez",
+            "carla jones",
+            "luis vega",
+            "susan brown"
+        ];
 
-        await page.waitForSelector(".main-banner--section-offer");
-        await page.waitForTimeout(8000);
-        await takeScreenshot("Pagina-de-servicios");
-        await expect(page.locator("#serviceButtonTypeBusinessLounge")).toBeVisible();
-        await page.waitForSelector("#serviceButtonTypeBusinessLounge");
-        await page.locator('#serviceButtonTypeBusinessLounge').click({ delay: getRandomDelay() });
-        await page.waitForSelector(".service_item_button.button");
-        await page.locator('.service_item_button.button').first().click({ delay: getRandomDelay() });
-        await takeScreenshot("Servicio avianca-lounges");
-        await page.locator('.button.amount-summary_button.amount-summary_button-action.is-action.ng-star-inserted').last().click({ delay: getRandomDelay() });
+        const lastNamesData: Array<string> = [
+            "Doe",
+            "Smith",
+            "Wilson",
+            "Gomez",
+            "Perez",
+            "Martinez",
+            "Hernandez",
+            "Jones",
+            "Vega",
+            "Brown"
+        ];
 
-        await expect(page.locator('#serviceButtonTypeSpecialAssistance')).toBeVisible();
-        await page.waitForSelector("#serviceButtonTypeSpecialAssistance");
-        await page.locator('#serviceButtonTypeSpecialAssistance').click({ delay: getRandomDelay() });
-        await takeScreenshot("Servicio asistencia especial");
-        await page.waitForSelector(".service_item_button.button");
-        await page.locator('.service_item_button.button').first().click({ delay: getRandomDelay() });
-        await page.locator('.button.amount-summary_button.amount-summary_button-action.is-action.ng-star-inserted').last().click({ delay: getRandomDelay() });
+        const emailsData: Array<string> = [
+            "monitoreo.digital@avianca.com"
+        ];
 
-        await expect(page.locator('.services-card_action_button.button').last()).toBeVisible();
-        await takeScreenshot("Asistencia en viaje");
-        await page.waitForSelector(".services-card_action_button.button");
-        await page.locator('.services-card_action_button.button').last().click({ delay: getRandomDelay() });
-        await page.waitForSelector(".button.amount-summary_button.amount-summary_button-action.is-action.ng-star-inserted.FB-newConfirmButton");
-        await page.locator('.button.amount-summary_button.amount-summary_button-action.is-action.ng-star-inserted.FB-newConfirmButton').click({ delay: getRandomDelay() });
-        await takeScreenshot("Servicios añadidos");
-        await expect(page.locator(".button_label").last()).toBeVisible();
-        await page.locator('.button_label').last().click({ delay: getRandomDelay() });
+        const phoneNumbersData: Array<string> = [
+            "123456",
+            "987654",
+            "654321",
+            "321654",
+            "987123",
+            "456789",
+            "102938",
+            "112233",
+            "778899",
+            "334455"
+        ];
 
-        const upsellService = await page.locator('.terciary-button').last().isVisible()
-        if (upsellService) {
-            await page.locator('.terciary-button').last().click({ delay: getRandomDelay() })
-        }
-        await page.waitForTimeout(12000);
-        await takeScreenshot("Pagina-de-seleccion-asientos");
-        //seleccion de asientos
-        const pasajeros = page.locator(".pax-selector_pax-avatar")
+        await passengers(page, takeScreenshot, userNamesData, lastNamesData, emailsData, phoneNumbersData);
 
-        for (const e of await pasajeros.all()) {
-            await takeScreenshot("seleccion-asiento");
-            await expect(page.locator(".seat-number").first()).toBeVisible();
-            await page.locator('.seat-number').first().click({ delay: getRandomDelay() });
-            await page.waitForTimeout(8000);
-        }
-        await page.waitForSelector(".next-flight-code");
-        await expect(page.locator(".next-flight-code")).toBeVisible();
-        await takeScreenshot("seleccion-asiento-vuelta");
-        await page.locator('.next-flight-code').click({ delay: getRandomDelay() });
+        await services(page, takeScreenshot);
 
-        const pasajerosVuelta = page.locator(".pax-selector_pax-avatar")
+        await seats(page, takeScreenshot, copys, idioma);
 
-        for (const j of await pasajerosVuelta.all()) {
-            await takeScreenshot("seleccion-asiento");
-            await expect(page.locator(".seat-number").first()).toBeVisible();
-            await page.locator('.seat-number').first().click({ delay: getRandomDelay() });
-            await page.waitForTimeout(8000);
-        }
-
-        await expect(page.getByRole('button', { name: copys[idioma].pagar, exact: true })).toBeVisible()
-        await page.getByRole('button', { name: copys[idioma].pagar, exact: true }).click({ delay: getRandomDelay() });
-        await page.waitForTimeout(5000);
         // await expect(page.locator('.payment-container_title')).toBeVisible();
         // await takeScreenshot("pagos");
 
@@ -398,51 +236,10 @@ test.describe('Comenzo prueba avianca', () => {
         // await expect(noOtraTarjeta).toBeVisible();
         // await noOtraTarjeta.click();
         await page.waitForTimeout(1000);
-        await clearInterval(intervalId);
+        // await clearInterval(intervalId);
 
         // Llenar datos de facturación
-        await page.waitForSelector('input#email', { timeout: 15_000 });
-
-        // Correo electrónico
-        const emailInput = page.locator('input#email');
-        await expect(emailInput).toBeVisible();
-        await emailInput.fill('monitoreo.digital@avianca.com');
-
-        // Dirección de residencia
-        const addressInput = page.locator('input#address');
-        await expect(addressInput).toBeVisible();
-        await addressInput.fill('Calle 123 #45-67');
-
-        // Ciudad
-        const cityInput = page.locator('input#city');
-        await expect(cityInput).toBeVisible();
-        await cityInput.fill('Bogotá');
-
-        // País
-        const countryBtn = page.locator('button#country');
-        await expect(countryBtn).toBeVisible();
-        await countryBtn.click();
-
-        // Esperar a que aparezcan las opciones
-        await page.waitForSelector('div.ds-select-dropdown li button', { timeout: 5_000 });
-
-        // Seleccionar “Colombia”
-        const countryOption = page
-            .locator('div.ds-select-dropdown li button')
-            .filter({ hasText: 'Colombia' });
-        await expect(countryOption).toBeVisible();
-        await countryOption.click({ delay: getRandomDelay() });
-
-        await takeScreenshot('19-country-seleccionado');
-
-        // Aceptar Términos
-        const termsCheckbox = page.locator('input#terms');
-        await expect(termsCheckbox).toBeVisible();
-        await termsCheckbox.check();
-        await takeScreenshot('20-aceptar-terminos');
-
-        // Captura final de facturación
-        await takeScreenshot('21-datos-facturacion');
+        await payment(page, takeScreenshot);
 
     });
 });
