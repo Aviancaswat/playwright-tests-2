@@ -122,7 +122,7 @@ test.describe('Comenzo prueba avianca', () => {
         //chromium.use(stealth);
         // Replace with your res
         const browser = await chromium.launch({
-            headless: false,
+            headless: true,
             args: ['--disable-blink-features=AutomationControlled',
                 '--enable-webgl',
                 '--use-gl=swiftshader',
