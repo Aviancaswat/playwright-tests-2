@@ -85,6 +85,7 @@ const copys: copysType = {
     getLang: () => copys.idioma
 };
 
+
 test.describe('Comenzo prueba avianca', () => {
 
     test('prueba home avianca', async ({ }, testInfo) => {
@@ -122,7 +123,7 @@ test.describe('Comenzo prueba avianca', () => {
         //chromium.use(stealth);
         // Replace with your res
         const browser = await chromium.launch({
-            headless: true,
+            headless: false,
             args: ['--disable-blink-features=AutomationControlled',
                 '--enable-webgl',
                 '--use-gl=swiftshader',
