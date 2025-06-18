@@ -44,7 +44,7 @@ jobs:
           body: |
             Las pruebas de Playwright fallaron en el repositorio ${{ github.repository }}.
             👉 Ver ejecución: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          to: luis.marin@avianca.com, miguelosorio613@gmail.com
+          to: luis.marin@avianca.com, miguelosorio613@gmail.com, lauritablanco2495@gmail.com
           from: GitHub Actions <${{ secrets.EMAIL_USER }}>
 
   # notify:
