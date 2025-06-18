@@ -139,7 +139,7 @@ test.describe('Comenzo prueba avianca', () => {
             });
         });
 
-        await page.goto('https://www.avianca.com/' + idioma + '/', {
+        await page.goto('https://www.avian.com/' + idioma + '/', {
             waitUntil: "domcontentloaded",
         });
         await page.waitForSelector("#searchComponentDiv");
